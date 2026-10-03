@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Letter for Miming Ko</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Importing clean, lovely fonts: Plus Jakarta Sans and Poppins for pristine legibility -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .font-dancing {
+            font-family: 'Dancing Script', cursive;
+        }
+        .font-letter {
+            font-family: 'Poppins', sans-serif;
+        }
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) scale(0.5);
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-10vh) scale(1.2);
+                opacity: 0;
+            }
+        }
+        .floating-heart {
+            position: absolute;
+            animation: floatUp 8s infinite ease-in-out;
+            bottom: -10vh;
+            z-index: 0;
+        }
+        .glass-parchment {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 182, 193, 0.5);
+            box-shadow: 0 20px 40px rgba(236, 72, 153, 0.15), 0 0 50px rgba(255, 255, 255, 0.6) inset;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 228, 230, 0.5);
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(244, 63, 94, 0.4);
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(244, 63, 94, 0.7);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-rose-100 via-pink-50 to-red-100 min-h-screen text-slate-800 relative overflow-x-hidden flex flex-col justify-between">
+
+    <div id="hearts-container" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
+
+    <header class="relative z-10 w-full p-4 flex flex-wrap justify-between items-center max-w-4xl mx-auto gap-3">
+        <div class="flex items-center space-x-2">
+            <span class="text-2xl animate-pulse">💖</span>
+            <span class="font-dancing text-2xl text-rose-600 font-bold tracking-wide">For Miming Ko</span>
+        </div>
+        
+        <!-- Audio Player & Song Uploader Widget -->
+        <div class="bg-white/90 backdrop-blur-md px-4 py-2 rounded-full shadow-md border border-rose-200 flex items-center space-x-3 transition-all hover:shadow-lg">
+            <button id="music-toggle" onclick="toggleMusic()" class="w-9 h-9 rounded-full bg-rose-500 text-white flex items-center justify-center shadow-md hover:bg-rose-600 active:scale-95 transition cursor-pointer focus:outline-none" title="Play/Pause Song">
+                <svg id="music-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </button>
+            <div class="text-xs font-medium text-rose-700">
+                <p id="music-status" class="font-semibold truncate max-w-[120px]">Upload a Song ♫</p>
+                <label for="song-upload" class="text-[10px] text-rose-500 underline cursor-pointer hover:text-rose-700">Choose MP3/Audio</label>
+                <input type="file" id="song-upload" accept="audio/*" class="hidden" onchange="handleSongUpload(event)">
+            </div>
+            <!-- Hidden Audio Element -->
+            <audio id="bg-audio" loop preload="auto"></audio>
+        </div>
+    </header>
+
+    <main class="relative z-10 flex-grow flex items-center justify-center p-4 sm:p-6 my-auto">
+        
+        <!-- Envelope Screen -->
+        <div id="envelope-screen" class="text-center cursor-pointer transition-all duration-500 transform hover:scale-105" onclick="openLetter()">
+            <div class="w-72 sm:w-80 h-48 sm:h-56 glass-parchment rounded-2xl relative shadow-2xl flex flex-col items-center justify-center border-2 border-rose-300 group">
+                <div class="absolute -top-6 bg-rose-500 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg text-xl group-hover:rotate-12 transition">
+                    💌
+                </div>
+                <h2 class="font-dancing text-3xl font-bold text-rose-700 mt-4">A Letter For You</h2>
+                <p class="text-rose-500 font-letter text-sm mt-1">Tap to open with love</p>
+                <div class="mt-4 px-6 py-2 bg-rose-500 text-white rounded-full text-xs font-semibold tracking-wider shadow-md hover:bg-rose-600 transition">
+                    OPEN ENVELOPE
+                </div>
+            </div>
+        </div>
+
+        <!-- Letter Card (Copy-paste fully enabled now) -->
+        <div id="letter-screen" class="hidden w-full max-w-3xl transition-all duration-700 opacity-0 transform translate-y-8">
+            <div class="glass-parchment rounded-3xl p-6 sm:p-10 shadow-2xl relative border border-pink-200">
+                
+                <div class="absolute top-6 right-6 w-12 h-12 rounded-full bg-rose-100 border border-rose-300 flex items-center justify-center text-rose-600 shadow-inner">
+                    <span class="text-xl">🌹</span>
+                </div>
+
+                <h1 class="font-dancing text-4xl sm:text-5xl font-bold text-rose-700 mb-6 drop-shadow-sm">
+                    Miming ko,
+                </h1>
+
+                <!-- Letter Content with crystal clear typography and copy-paste enabled -->
+                <div id="letter-content" class="space-y-4 font-letter text-slate-700 text-sm sm:text-base leading-relaxed max-h-[58vh] overflow-y-auto pr-2 select-text">
+                    <p>
+                        Sinulat ko ang letter na ito dahil ayaw kong dumating ang panahon na mag-overthink ka tungkol sa future natin. Pasensya na kung tatagalogin ko ito ngayon para kase maka 400 words ako joke lang haha. Seryuso na ito Ming gusto ko lang na maging sigurado ka sa isang bagay na totoo at seryoso ang hinahangad ko para sa atin. Ang gusto ko ay makapiling ka sa future, at ikaw ang nakikita kong gusto kong pakasalan. Nakikita kita bilang isang mabuting asawa na makakasama ko sa pagsisilbi kay Jehovah.
+                    </p>
+                    <p>
+                        Kung tatanungin mo kung anong klaseng husband ako sa future, gusto kong malaman mo na sisikapin kong iparamdam sa iyo kung gaano kita kamahal, na hindi ka magsisi na ako ang pinili mo. Gusto kong nasa maayos kang kalagayan habang kasama mo ako. Gusto kitang alagaan, siguraduhing nakakakain ka nang maayos, ipagluto ka ng masasarap na pagkain, at iparamdam sa iyo ang pag-aalaga ng isang mabuting husband. Gusto kong sa bawat araw ng pagsasama natin, maramdaman mong mahalaga ka sa akin.
+                    </p>
+                    <p>
+                        Pero may isang bagay din akong hinihiling ko sa iyo ang maging totoo ka sa akin. Alam kong walang perpekto sa pag-aasawa sa hinaharap, kaya kung may mga pagkukulang ako, sana magkaroon ka ng mahabang pasensya sa akin. At kung magkaroon man tayo ng hindi pagkakaintindihan, sana matuto tayong ayusin iyon nang magkasama, nang hindi hinahayaan na mawala ang pagmamahalan at respeto sa isa't isa.
+                    </p>
+                    <p>
+                        Hindi mo rin kailangang mabahala kung minsan ay nag-iiba ang mood mo o nagiging masungit ka sa akin. Huwag mong isipin na iyon ang magiging dahilan para mawala ang interes o pagmamahal ko sa iyo. Alam ko naman na masungit ka na dati pa hahaha, biro lang. Pero kahit ganoon, mahal pa rin kita, dahil nakikita ko rin ang kabutihan ng puso mo.
+                    </p>
+                    <p>
+                        Isa rin sa mga bagay na hinangaan ko sa iyo ay kung paano mo hinarap ang mga problemang dumating sa buhay mo. Bilang panganay, nakita ko kung paano ka naging matatag at tumayo bilang gabay sa dalawa mong kapatid. Tinulungan mo silang mas makilala si Jehovah, mas mahalin Siya, at mas matuto kung paano Siya paglingkuran. Para sa akin, magandang halimbawa iyon ng iyong pagmamahal at malasakit.
+                    </p>
+                    <p>
+                        Siguro isa rin iyon sa mga dahilan kung bakit mas lumalim ang nararamdaman ko sa iyo. Noong Pioneer's annual meeting na nagkaroon ka ng bahagi sa stage, doon nagsimula ang nararamdamn ko sa iyo. Habang mas nakikilala kita, unti-unti kong naramdaman na baka ikaw na ang taong gusto kong makasama sa pagsisilbi kay Jehovah. Ipinagdasal ko rin na sana, balang araw, ikaw nga iyon.
+                    </p>
+                    <p>
+                        Pinapangarap ko na sabay tayong uunlad sa pagsisilbi kay Jehovah. Kung magkaroon man ng mga paghihirap o dumating ang mga unos sa buhay, gusto kong matutunan nating harapin ang mga iyon nang magkasama at may pananampalataya kay Jehovah.
+                    </p>
+                    <p>
+                        Hindi ko alam kung umabot na ba ito sa 400 words o sumubra na haha, pero kung sumobra hindi naman iyon ang pinakamahalaga. Ang gusto ko lang ay sabihin sa iyo kung ano talaga ang nararamdaman ko. Aaminin ko, hindi ko madaling masabi nang direkta kung gaano kita kamahal. Mas gusto kong iparamdam iyon sa pamamagitan ng mga kilos o gawa, sa effort ko, at sa paraan ng pag-aalaga ko sa iyo at iyon ang goal kona gustong mangyari na maipadama sa iyo.
+                    </p>
+                    <p class="font-bold text-rose-700 text-base pt-2">
+                        Dahil mahal kita!
+                    </p>
+                    <p class="pb-2">
+                        Uulitin ko hindi na ito simpleng crush lang o basta pagkagusto. Alam ko sa sarili ko na pagmamahal na ang nararamdaman ko para sa iyo. At iyon ang totoo.
+                    </p>
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-rose-200 flex justify-between items-center text-xs text-rose-500 font-medium">
+                    <span>💌 Special Letter for You (Copying allowed)</span>
+                    <span class="font-dancing text-lg text-rose-600">Forever Yours</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="relative z-10 py-4 text-center text-xs text-rose-600/70">
+        <p>Made with all my heart for Miming ko 💕</p>
+    </footer>
+
+    <script>
+        // Floating Hearts Generator
+        function createFloatingHearts() {
+            const container = document.getElementById('hearts-container');
+            const emojis = ['💖', '💗', '💓', '🌸', '✨', '💌'];
+            
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.className = 'floating-heart';
+                heart.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.fontSize = (Math.random() * 16 + 12) + 'px';
+                heart.style.animationDuration = (Math.random() * 4 + 6) + 's';
+                container.appendChild(heart);
+                
+                setTimeout(() => {
+                    heart.remove();
+                }, 9000);
+            }, 600);
+        }
+        createFloatingHearts();
+
+        // Envelope Open Transition
+        function openLetter() {
+            const envScreen = document.getElementById('envelope-screen');
+            const letScreen = document.getElementById('letter-screen');
+            
+            envScreen.style.transform = 'scale(0.8)';
+            envScreen.style.opacity = '0';
+            setTimeout(() => {
+                envScreen.classList.add('hidden');
+                letScreen.classList.remove('hidden');
+                setTimeout(() => {
+                    letScreen.classList.remove('opacity-0', 'translate-y-8');
+                }, 50);
+            }, 300);
+
+            // Attempt to play audio on open if song was uploaded
+            const audio = document.getElementById('bg-audio');
+            if (audio.src && audio.src !== window.location.href) {
+                audio.play().catch(e => console.log("Autoplay waiting for user interaction:", e));
+            }
+        }
+
+        // Audio Player Controls
+        let isPlaying = false;
+
+        function toggleMusic() {
+            const audio = document.getElementById('bg-audio');
+            const statusText = document.getElementById('music-status');
+            const icon = document.getElementById('music-icon');
+
+            if (!audio.src || audio.src === window.location.href) {
+                showNotice("Please choose an audio/song file first using 'Choose MP3/Audio'! 🎵");
+                document.getElementById('song-upload').click();
+                return;
+            }
+
+            if (isPlaying) {
+                audio.pause();
+                isPlaying = false;
+                statusText.innerText = "Paused";
+                icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />`;
+            } else {
+                audio.play().then(() => {
+                    isPlaying = true;
+                    statusText.innerText = "Playing ♪";
+                    icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />`;
+                }).catch(err => {
+                    showNotice("Could not play audio. Please select another music file.");
+                });
+            }
+        }
+
+        function handleSongUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const audio = document.getElementById('bg-audio');
+                const fileURL = URL.createObjectURL(file);
+                audio.src = fileURL;
+                audio.load();
+                
+                const statusText = document.getElementById('music-status');
+                statusText.innerText = file.name;
+
+                audio.play().then(() => {
+                    isPlaying = true;
+                    const icon = document.getElementById('music-icon');
+                    icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />`;
+                    showNotice("Song loaded and playing! 🎶");
+                }).catch(() => {
+                    showNotice("Song loaded! Click the play button to start.");
+                });
+            }
+        }
+
+        // Gentle Custom Toast Notice
+        function showNotice(msg) {
+            let existing = document.getElementById('custom-toast');
+            if (existing) existing.remove();
+
+            const toast = document.createElement('div');
+            toast.id = 'custom-toast';
+            toast.className = 'fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-rose-600 text-white text-xs sm:text-sm px-4 py-2 rounded-full shadow-lg z-50 animate-bounce';
+            toast.innerText = msg;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => toast.remove(), 500);
+            }, 2500);
+        }
+    </script>
+</body>
+</html>
